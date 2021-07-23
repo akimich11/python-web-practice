@@ -1,0 +1,15 @@
+{% if get %}
+    {% for key, value in get.items %}
+        get {{ key }}: {{ value }}
+    {% endfor %}
+{% endif %}
+{% if post %}
+    {% for key, value in post.items %}
+        post {{ key }}: {{ value }}
+    {% endfor %}
+{% endif %}
+{% if x != '' %}
+    statement is {{ x }}
+{% else %}
+    statement is empty
+{% endif %}
