@@ -28,7 +28,7 @@ class ControllerView(FormView):
             with open(os.path.join(tempfile.gettempdir(), 'controller.json')) as f:
                 data = json.load(f)
         except FileNotFoundError:
-            data = {}
+            data = {'bedroom_light': False, 'bathroom_light': False}
         return {
             'bedroom_light': data['bedroom_light'],
             'bathroom_light': data['bathroom_light'],
@@ -36,13 +36,12 @@ class ControllerView(FormView):
             'bedroom_target_temperature': Setting.objects.get(controller_name='bedroom_target_temperature').value
         }
 
-
-def form_valid(self, form):
-    with open(os.path.join(tempfile.gettempdir(), 'form.json'), 'w') as f:
-        json.dump({'bedroom_light': form.cleaned_data['bedroom_light'],
-                   'bathroom_light': form.cleaned_data['bathroom_light']}, f)
-    Setting.objects.filter(controller_name='hot_water_target_temperature').update(
-        value=form.cleaned_data['hot_water_target_temperature'])
-    Setting.objects.filter(controller_name='bedroom_target_temperature').update(
-        value=form.cleaned_data['bedroom_target_temperature'])
-    return super(ControllerView, self).form_valid(form)
+    def form_valid(self, form):
+        with open(os.path.join(tempfile.gettempdir(), 'form.json'), 'w') as f:
+            json.dump({'bedroom_light': form.cleaned_data['bedroom_light'],
+                       'bathroom_light': form.cleaned_data['bathroom_light']}, f)
+        Setting.objects.filter(controller_name='hot_water_target_temperature').update(
+            value=form.cleaned_data['hot_water_target_temperature'])
+        Setting.objects.filter(controller_name='bedroom_target_temperature').update(
+            value=form.cleaned_data['bedroom_target_temperature'])
+        return super(ControllerView, self).form_valid(form)

@@ -6,6 +6,7 @@ import tempfile
 
 from celery import task
 from django.conf import settings
+from django.core.mail import send_mail
 
 from .models import Setting
 import requests
@@ -27,10 +28,6 @@ def post_response(changed_parameters):
     if len(changed_parameters):
         print(requests.post(settings.SMART_HOME_API_URL,
                             data=json.dumps(controllers), headers=HEADERS).json()['status'])
-
-
-def send_mail():
-    pass
 
 
 class DecisionMaker:
@@ -58,7 +55,8 @@ class DecisionMaker:
         if self.is_leak:
             self.new_data['hot_water'] = False
             self.new_data['cold_water'] = False
-        send_mail()
+        send_mail(subject='Emergency situation', message='There is a water leak in your house!',
+                  from_email='from@example.com', recipient_list=[settings.EMAIL_RECEPIENT, ])
 
     def check_smoke(self):
         if self.is_smoke:
